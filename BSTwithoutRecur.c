@@ -1,95 +1,154 @@
-#include<stdio.h>
-#include<stdlib.h>
+/*
+ ============================================================================
+ Name        : rts52.c
+ Author      : 
+ Version     :
+ Copyright   : Your copyright notice
+ Description : BINARY SEARCH TREE OPERATIONS (WITHOUT RECURSION)
+ ============================================================================
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#define SIZE 20
+
 typedef struct node
 {
 	int data;
-	struct node *left,*right;
-}node;
-void insertBST(node **p,int val)
+	struct node *left;
+	struct node *right;
+}NODE;
+
+void insert(NODE **p,int val)
 {
-    node *newnode,*temp;
-    newnode=(node *)malloc(sizeof(node));
-    newnode->data=val;
-    newnode->left=NULL;
-    newnode->right=NULL;
-    if((*p)==NULL)
-        (*p)=newnode;
-    else
-    {
-        node *temp=*p;
-        while(temp!=NULL)
-        {
-            //printf("Inserting %d and currently at %d\n",val,temp->data);
-            if(temp->data>val&&temp->left!=NULL)
-                temp=temp->left;
-            else if(temp->data>val&&temp->left==NULL)
-            {
-                //printf("\n\nInserting %d to left of %d\n",val,temp->data);
-                temp->left=newnode;
-                break;
-            }
-            if(temp->right!=NULL&&temp->data<=val)
-                temp=temp->right;
-            else
-            {
-                //printf("\n\nInserting %d to right of %d\n",val,temp->data);
-                temp->right=newnode;
-                break;
-            }
-        }
-    }
+	if(*p==NULL)
+	{
+		printf("Insert Succesful.");
+		NODE *newnode=(NODE*)malloc(sizeof(NODE));
+		newnode->data=val;
+		newnode->left=NULL;
+		newnode->right=NULL;
+		*p=newnode;
+	}
+	else if((*p)->data>val)
+		insert(&(*p)->left,val);
+	else
+		insert(&(*p)->right,val);
+	//printf("%d\t",(*p)->data); //TO DISPLAY TREE TRACE!
 }
-void display(node *p)
+
+void preorder(NODE *p)
 {
-    if(p==NULL)
-        return;
-    else
-    {
-        display(p->left);
-        printf("%d\n",p->data);
-        display(p->right);
-    }
+	NODE *s[SIZE];
+	int top=-1;
+	while(1)
+	{
+		while(p!=NULL)
+		{
+			printf("%d\t",p->data);
+			s[++top]=p;
+			p=p->left;
+		}
+
+		if(top!=-1)
+		{
+			p=s[top--];
+			p=p->right;
+		}
+
+		else
+			break;
+	}
 }
-int search(node *p,int val)
+
+void inorder(NODE *p)
 {
-    while(p!=NULL)
-    {
-        if(p->data==val)
-            return 1;
-        else if(p->data>val)
-            p=p->left;
-        else
-            p=p->right;
-    }
-    return 0;
+	NODE *s[SIZE];
+	int top=-1;
+
+	while(1)
+	{
+		while(p!=NULL)
+		{
+			s[++top]=p;
+			p=p->left;
+		}
+
+		if(top!=-1)
+		{
+			p=s[top--];
+			printf("%d\t",p->data);
+			p=p->right;
+		}
+		else
+			break;
+	}
 }
-int height(node *p)
+
+void postorder(NODE *p)
 {
-    if(p==NULL)
-        return 0;
-    else
-    {
-        int x=height(p->left);
-        int y=height(p->right);
-        return x>y?x+1:y+1;
-    }
+	NODE *s[SIZE];
+	int flag[SIZE];
+	int top=-1;
+
+	while(1)
+	{
+		while(p!=NULL)
+		{
+			s[++top]=p;
+			flag[top]=0;
+			p=p->left;
+		}
+
+		while(top!=-1 && flag[top]==1)
+		{
+			p=s[top--];
+			printf("%d\t",p->data);
+		}
+
+		if(top!=-1)
+		{
+			p=s[top];
+			p=p->right;
+			flag[top]=1;
+		}
+
+		else
+			break;
+	}
 }
-void main()
+
+int main(void)
 {
-    node *root;
-    root=NULL;
-    insertBST(&root,40);
-    insertBST(&root,20);
-    insertBST(&root,50);
-    insertBST(&root,30);
-    insertBST(&root,42);
-    insertBST(&root,100);
-    insertBST(&root,58);
-    insertBST(&root,25);
-    insertBST(&root,47);
-    insertBST(&root,106);
-    printf("\n\n\n");
-    display(root);
-    printf("\nThe value found's Truth Value is %d\nn",search(root,2006));
-    printf("The Height of tree is %d\n",height(root));
+	int choice,value;
+	NODE *root=NULL;
+	for(;;)
+	{
+		printf("\n1.Insert Value in Binary Search Tree.");
+		printf("\n2.Display Binary Search Tree in Preorder.");
+		printf("\n3.Display Binary Search Tree in Inorder.");
+		printf("\n4.Display Binary Search Tree in Postorder.");
+		printf("\n5.Exit");
+		printf("\nEnter Choice : ");
+		scanf("%d",&choice);
+		switch(choice)
+		{
+			case 1: printf("Enter Value to be Inserted : ");
+					scanf("%d",&value);
+					insert(&root,value);
+					break;
+			case 2: printf("Binary Search Tree in Preorder : ");
+					preorder(root);
+					break;
+			case 3: printf("Binary Search Tree in Inorder : ");
+					inorder(root);
+					break;
+			case 4: printf("Binary Search Tree in Postorder : ");
+					postorder(root);
+					break;
+			case 5: exit(0);
+			default: printf("\nWrong choice!");
+		}
+		printf("\n");
+	}
 }

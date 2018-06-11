@@ -1,4 +1,5 @@
-#include<stdio.h>
+#include<stdio.h>       //Accurate and Best application till date 24-07-17
+#include<stdlib.h>
 typedef struct node{
     int data;
     struct node *left,*right;
@@ -123,23 +124,87 @@ void printinTreeFormat(node *root)
         getNodeatDepth(root,count++,0);
     }
 }
+void deleteNode(node **root,int val)
+{
+    printf("In deklete node %d is val",val);
+    node *t=*root,*prev;int l=-1;
+    while(t!=NULL&& t->data!=val)
+    {
+        prev=t;
+        if(t->data>val)
+        {
+            t=t->left;
+            l=1;
+        }
+        else
+        {
+            t=t->right;
+            l=0;
+        }
+    }
+    if(t==NULL)
+        return;
+    else
+    {
+        printf("Value found\n");
+        if(t->left==NULL)
+        {
+            if(l==0)
+            {
+                prev->right=t->right;
+            }
+            else if(l==1)
+            {
+                prev->left=t->right;
+            }
+        }
+        else if(t->right==NULL)
+        {
+            if(l==0)
+            {
+                prev->right=t->left;
+            }
+            else if(l==1)
+            {
+                prev->left=t->left;
+            }
+        }
+        else
+        {
+            int d;
+            printf("Inside else\n");
+            node *var=t->left,*varprev=t;
+            while(var->right!=NULL)
+            {
+                varprev=var;
+                var=var->right;
+            }
+            if(varprev!=t)
+                varprev->right=NULL;
+            else
+                varprev->left=NULL;
+            t->data=var->data;
+        }
+    }
+
+}
 void main()
 {
     int choice,temp;
     node *root=NULL;
-    /*insertinTree(&root,10);
+    insertinTree(&root,10);
     insertinTree(&root,100);
     insertinTree(&root,30);
     insertinTree(&root,0);
     insertinTree(&root,50);
     insertinTree(&root,40);
     insertinTree(&root,70);
-    insertinTree(&root,105);*/
+    insertinTree(&root,105);
 
     do{
         printf("Choose from the choices\n\n1:Insert in tree\n2:Inorder trvaersal of tree\n");
         printf("3:Searching for an element\n4:Get the height of the tree\n5:Check if the tree is Full(Strictly Binary Tree)\n");
-        printf("6:Check if tree is Complete(isFull+leaves are at same height)\n7:Print in tree FFormat\n0:Exit!!\n");
+        printf("6:Check if tree is Complete(isFull+leaves are at same height)\n7:Print in tree Format\n8:Delete a anode from BST\n0:Exit!!\n");
         scanf("%d",&choice);
         switch(choice)
         {
@@ -155,6 +220,10 @@ void main()
             case 5:printf("%d\n",isFull(root));break;
             case 6:printf("%d\n",isComplete(root));break;
             case 7:printinTreeFormat(root);break;
+            case 8:printf("Enter the value to be deleted\n");
+            scanf("%d",&temp);
+            deleteNode(&root,temp);
+            break;
             case 0:break;
             default:printf("You have entered an invalid choice\n");
         }
